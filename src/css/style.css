@@ -58,9 +58,37 @@ body {
 }
 
 .container__chat-tape {
+    display: flex;
+    flex-direction: column;
     background-color: #cff2fa;
     flex-grow: 1;
     min-width: 100%;
+    overflow-y: auto; /* Добавляем вертикальную прокрутку, если сообщений слишком много */
+}
+
+.chat-message {
+    margin: 10px;
+    padding: 10px 15px;
+    border-radius: 10px;
+    max-width: 80%;
+    font-size: 16px;
+    line-height: 1.4;
+    word-wrap: break-word; /* Перенос длинных слов */
+    overflow-wrap: break-word; /* Современный вариант */
+}
+
+.self-message {
+    background-color: #55ddc0;
+    align-self: flex-end;
+    text-align: right; /* Выравнивание текста по правому краю */
+    margin-left: auto;
+}
+
+.other-message {
+    background-color: #f0a5a5;
+    align-self: flex-start; /* Исправлено для корректного выравнивания */
+    text-align: left; /* Выравнивание текста по левому краю */
+    margin-right: auto;
 }
 
 .container__chat-send {
