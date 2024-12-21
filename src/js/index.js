@@ -8,37 +8,44 @@ const socket = new WebSocket("ws://localhost:3001"); // Замените URL н�
 // Флаг для исключения повторного отображения отправленных сообщений
 let isOwnMessage = false;
 
-// Функция для отображения сообщения в чате
-function addMessageToChat(content, isSelf = true) {
-  const messageElement = document.createElement("div");
-  messageElement.classList.add("chat-message");
-  messageElement.classList.add(isSelf ? "self-message" : "other-message"); // Стилизация по типу сообщения
+//! Функция для отображения сообщения в чате
 
-  messageElement.textContent = content; // Текст сообщения
+function addMessageToChat(content) {
+  const messageElement = document.createElement("div");
+  messageElement.classList.add("chat-message", "self-message"); // Все сообщения справа
+
+  // Проверяем, есть ли ссылки в тексте
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const contentWithLinks = content.replace(urlRegex, (url) => {
+    return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+  });
+
+  messageElement.innerHTML = contentWithLinks; // Используем innerHTML для рендеринга ссылок
   chatTape.appendChild(messageElement); // Добавляем в ленту чата
   chatTape.scrollTop = chatTape.scrollHeight; // Прокручиваем вниз
 }
 
-// Обработчик отправки сообщения
+//! Обработчик отправки сообщения
+
 function handleSendMessage() {
-  const message = chatInput.value.trim(); // Получаем текст из поля ввода
+  const message = chatInput.value.trim();
 
-  if (!message) return; // Если поле пустое, ничего не делаем
+  if (!message) return;
 
-  // Добавляем сообщение в интерфейс как своё
-  addMessageToChat(message, true);
+  addMessageToChat(message, true); // Отображаем как своё
 
-  // Отправляем сообщение на сервер через WebSocket
   if (socket && socket.readyState === WebSocket.OPEN) {
-    isOwnMessage = true; // Устанавливаем флаг
+    isOwnMessage = true;
     const messageData = {
       type: "text",
       content: message,
+      isSelf: true, // Указываем, что сообщение отправлено вами
     };
+    console.log("Sending message to server:", messageData);
     socket.send(JSON.stringify(messageData));
   }
 
-  chatInput.value = ""; // Очищаем поле ввода
+  chatInput.value = "";
 }
 
 // Добавляем обработчик нажатия Enter в поле ввода
@@ -49,7 +56,7 @@ chatInput.addEventListener("keypress", (event) => {
   }
 });
 
-// Обработчик событий WebSocket
+//! Обработчик событий WebSocket
 socket.onopen = () => {
   console.log("WebSocket: Подключено");
 };
@@ -70,3 +77,37 @@ socket.onmessage = (event) => {
 socket.onclose = () => {
   console.log("WebSocket: Соединение закрыто");
 };
+
+//! Функция для загрузки сообщений при ленивой подгрузке
+
+async function loadMessages(offset = 0, limit = 10) {
+  console.log(
+    "Sending GET request to /messages with offset and limit:",
+    offset,
+    limit
+  );
+  try {
+    const response = await fetch(
+      `http://localhost:3000/messages?offset=${offset}&limit=${limit}`
+    );
+    if (!response.ok) {
+      throw new Error("Failed to load messages");
+    }
+
+    const messages = await response.json();
+    console.log("Loaded messages from server in order:", messages);
+
+    // Добавляем сообщения в том порядке, в котором они пришли
+    messages.forEach((message) => {
+      console.log("Adding message to chat:", message);
+      addMessageToChat(message.content); // Добавляем в конец чата
+    });
+  } catch (error) {
+    console.error("Error loading messages:", error);
+  }
+}
+
+// Загрузка последних 10 сообщений при загрузке страницы
+window.addEventListener("DOMContentLoaded", () => {
+  loadMessages();
+});
