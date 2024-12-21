@@ -1,4 +1,3 @@
-// webpack.common.js
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -9,6 +8,7 @@ module.exports = {
     filename: "bundle.js",
     path: path.resolve(__dirname, "dist"), // Папка для сборки
     clean: true, // Очистка папки dist перед новой сборкой
+    assetModuleFilename: "assets/[name][ext]", // Место сохранения обработанных файлов
   },
   module: {
     rules: [
@@ -26,6 +26,14 @@ module.exports = {
           "css-loader", // Поддержка импорта CSS в JS
         ],
       },
+      {
+        test: /\.(png|jpg|jpeg|gif|svg|ico)$/, // Обработка изображений
+        type: "asset/resource", // Копирование изображений в папку `assets`
+      },
+      {
+        test: /\.html$/, // Обработка HTML-файлов
+        loader: "html-loader", // Позволяет корректно подключать пути из HTML
+      },
     ],
   },
   plugins: [
@@ -38,4 +46,7 @@ module.exports = {
       filename: "style.css", // Имя CSS-файла в сборке
     }),
   ],
+  resolve: {
+    extensions: [".js", ".css"], // Расширения для импорта без указания
+  },
 };

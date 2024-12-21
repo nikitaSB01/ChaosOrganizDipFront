@@ -18,11 +18,28 @@ module.exports = merge(common, {
     ],
   },
   plugins: [
-    ...common.plugins, // Сохранение общих плагинов
+    ...(common.plugins || []), // Проверка на существование общих плагинов перед их использованием
     new WorkboxPlugin.GenerateSW({
       clientsClaim: true,
       skipWaiting: true,
       cleanupOutdatedCaches: true,
+      runtimeCaching: [
+        {
+          urlPattern: /\.(?:html|css|js)$/,
+          handler: "StaleWhileRevalidate",
+        },
+        {
+          urlPattern: /\.(?:png|jpg|jpeg|svg|gif)$/,
+          handler: "CacheFirst",
+          options: {
+            cacheName: "images",
+            expiration: {
+              maxEntries: 50,
+              maxAgeSeconds: 30 * 24 * 60 * 60, // 30 дней
+            },
+          },
+        },
+      ],
     }),
   ],
 });

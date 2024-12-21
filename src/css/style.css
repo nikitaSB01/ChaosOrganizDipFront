@@ -1,90 +1,149 @@
-/* Общие стили */
+html,
 body {
-    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f0f0f0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
 }
 
 .container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    height: 100vh; /* Высота окна браузера */
+    display: flex; /* Flexbox для распределения пространства */
+    box-sizing: border-box;
+    overflow: hidden; /* Отключаем прокрутку */
 }
 
-h1 {
-    font-size: 24px;
-    margin-bottom: 20px;
+.container__chat {
+    width: 100%; /* Изначально чат на всю ширину */
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    transition: width 0.3s ease; /* Плавное изменение ширины */
 }
 
-button {
-    background-color: #007bff;
-    color: white;
-    padding: 10px 20px;
+.container__chat.reduced {
+    width: calc(100% - 300px); /* Сужаем чат при открытом модальном окне */
+}
+
+.container__chat-hend {
+    box-sizing: border-box;
+    background-color: #f3eaea;
+    max-height: 40px;
+    min-height: 40px;
+    min-width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+}
+
+.chat-hend-btn {
+    display: flex;
+}
+
+.chat-hend-btn .hend {
+    margin-left: 20px;
+}
+
+.head {
+    font-size: 20px;
+    font-weight: bold;
+    color: #2882a6;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0;
+    padding: 0;
+}
+
+.container__chat-tape {
+    background-color: #cff2fa;
+    flex-grow: 1;
+    min-width: 100%;
+}
+
+.container__chat-send {
+    background-color: #f3eaea;
+    min-width: 100%;
+    min-height: 60px;
+    max-height: 60px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+.container__chat-send .send {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.container__chat-send .text-input {
+    background-color: #f3eaea;
+    margin-left: 10px;
+    flex-grow: 1;
+    height: 100%;
+    font-size: 18px;
+    font-weight: 500;
+    border: none;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 20px;
+    height: 20px;
+    background: none;
     border: none;
     cursor: pointer;
+    padding: 0;
+    transition:
+        transform 0.2s ease,
+        background-color 0.2s ease;
 }
 
-button:hover {
-    background-color: #0056b3;
-}
-
-/* Стили для контейнера новостей */
-.news-container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-/* Стили для отображения ошибки */
-.error-container {
-    display: none;
-    color: red;
-    text-align: center;
-    font-size: 18px;
-}
-
-/* Состояние загрузки - имитация контента */
-.loading-item {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 10px;
-    margin-bottom: 20px;
-}
-
-.loading-item-elem {
-    width: 100px; /* Маленький прямоугольник */
-    height: 15px;
-    background-color: #ccc; /* Серый цвет для имитации загрузки */
-    animation: loading 1.5s infinite ease-in-out;
-}
-
-.loading-item-el {
-    width: 100%; /* Большой прямоугольник */
+.btn__icon {
+    width: 20px;
     height: 20px;
-    background-color: #ccc;
-    animation: loading 1.5s infinite ease-in-out;
 }
 
-@keyframes loading {
-    0% {
-        background-color: #ccc;
-    }
-    50% {
-        background-color: #e0e0e0;
-    }
-    100% {
-        background-color: #ccc;
-    }
+.btn:hover {
+    transform: scale(1.1);
+    border-radius: 50%;
 }
 
-/* Сообщение об ошибке */
-#errorContainer {
-    color: red;
-    font-size: 16px;
-    text-align: center;
-    display: none;
+.container__info {
+    position: fixed;
+    top: 0;
+    right: -100%; /* Скрыто за пределами экрана */
+    width: 300px;
+    height: 100%;
+    background-color: #f9f9f9;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
+    transition: right 0.3s ease; /* Плавное появление */
+    z-index: 1000;
+}
+
+.container__info.open {
+    right: 0; /* Показываем окно */
+}
+
+.info-widget {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    max-height: 40px;
+    box-sizing: border-box;
+}
+
+.info-widget-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
 }

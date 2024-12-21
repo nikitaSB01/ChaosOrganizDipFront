@@ -1,22 +1,84 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Новости мира кино</title>
+    <title>Chaos Organizer</title>
+    <!--  <link rel="stylesheet" href="css/style.css" /> -->
   </head>
   <body>
     <div class="container">
-      <h1>Новости мира кино</h1>
-      <button id="refreshButton">Обновить</button>
-      <div id="newsContainer" class="news-container">
-        <!-- Новости будут загружаться сюда -->
+      <div class="container__chat">
+        <div class="container__chat-hend">
+          <p class="head">Saved Mess</p>
+          <div class="chat-hend-btn">
+            <button class="btn hend search">
+              <img
+                src="./assets/free-icon-search-4024513.png"
+                alt="icon"
+                class="btn__icon"
+              />
+            </button>
+            <button class="btn hend menu" id="menu-toggle">
+              <img
+                src="./assets/free-icon-open-menu-4503665.png"
+                alt="icon"
+                class="btn__icon"
+              />
+            </button>
+            <button class="btn hend dots">
+              <img
+                src="./assets/free-icon-vertical-dots-64576.png"
+                alt="icon"
+                class="btn__icon"
+              />
+            </button>
+          </div>
+        </div>
+        <div class="container__chat-tape"></div>
+        <div class="container__chat-send">
+          <button class="btn send attach">
+            <img
+              src="./assets/free-icon-attach-interface-symbol-of-diagonal-paperclip-tool-45538.png"
+              alt="icon"
+              class="btn__icon"
+            />
+          </button>
+          <input
+            type="text"
+            class="text-input"
+            placeholder="Введите текст..."
+          />
+          <button class="btn send smile">
+            <img
+              src="./assets/free-icon-smile-1794767.png"
+              alt="icon"
+              class="btn__icon"
+            />
+          </button>
+          <button class="btn send microphone">
+            <img
+              src="./assets/free-icon-microphone-black-shape-25682.png"
+              alt="icon"
+              class="btn__icon"
+            />
+          </button>
+        </div>
       </div>
-      <div id="errorContainer" class="error-container">
-        <p>
-          Не удалось загрузить данные. Проверьте подключение и обновите
-          страницу.
-        </p>
+      <div class="container__info" id="info-modal">
+        <div class="container__info-widget">
+          <div class="info-widget">
+            <p class="head">Shared Media</p>
+            <button class="info-widget-btn btn" id="close-modal">
+              <img
+                src="./assets/free-icon-cross-4510630.png"
+                alt="icon"
+                class="btn__icon"
+              />
+            </button>
+          </div>
+          <div class="info-widgets"></div>
+        </div>
       </div>
     </div>
   </body>
