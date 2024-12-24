@@ -37,13 +37,14 @@
         </div>
         <div class="container__chat-tape"></div>
         <div class="container__chat-send">
-          <button class="btn send attach">
+          <button class="btn send attach" id="file-upload-btn">
             <img
               src="./assets/free-icon-attach-interface-symbol-of-diagonal-paperclip-tool-45538.png"
               alt="icon"
               class="btn__icon"
             />
           </button>
+          <input type="file" id="file-input" multiple hidden />
           <input
             type="text"
             class="text-input"
@@ -52,6 +53,13 @@
           <button class="btn send smile">
             <img
               src="./assets/free-icon-smile-1794767.png"
+              alt="icon"
+              class="btn__icon"
+            />
+          </button>
+          <button class="btn send camera">
+            <img
+              src="./assets/photo-camera-interface-symbol-for-button.png"
               alt="icon"
               class="btn__icon"
             />

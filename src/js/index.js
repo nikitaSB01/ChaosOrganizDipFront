@@ -10,19 +10,27 @@ let isOwnMessage = false;
 
 //! Функция для отображения сообщения в чате
 
-function addMessageToChat(content) {
+function addMessageToChat(content, mimetype) {
   const messageElement = document.createElement("div");
-  messageElement.classList.add("chat-message", "self-message"); // Все сообщения справа
+  messageElement.classList.add("chat-message", "self-message");
 
-  // Проверяем, есть ли ссылки в тексте
-  const urlRegex = /(https?:\/\/[^\s]+)/g;
-  const contentWithLinks = content.replace(urlRegex, (url) => {
-    return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
-  });
+  if (
+    mimetype &&
+    typeof mimetype === "string" &&
+    mimetype.startsWith("image/")
+  ) {
+    // Если сообщение — это изображение
+    messageElement.innerHTML = `<img src="${content}" alt="Uploaded image" class="chat-image" />`;
+  } else if (mimetype && typeof mimetype === "string") {
+    // Если это другой файл, создаём ссылку на скачивание
+    messageElement.innerHTML = `<a href="${content}" download>Скачать файл</a>`;
+  } else {
+    // Если это текст
+    messageElement.textContent = content;
+  }
 
-  messageElement.innerHTML = contentWithLinks; // Используем innerHTML для рендеринга ссылок
-  chatTape.appendChild(messageElement); // Добавляем в ленту чата
-  chatTape.scrollTop = chatTape.scrollHeight; // Прокручиваем вниз
+  chatTape.appendChild(messageElement);
+  chatTape.scrollTop = chatTape.scrollHeight; // Прокрутка вниз
 }
 
 //! Обработчик отправки сообщения
@@ -32,7 +40,7 @@ function handleSendMessage() {
 
   if (!message) return;
 
-  addMessageToChat(message, true); // Отображаем как своё
+  addMessageToChat(message); // Передаём только текст
 
   if (socket && socket.readyState === WebSocket.OPEN) {
     isOwnMessage = true;
@@ -81,11 +89,6 @@ socket.onclose = () => {
 //! Функция для загрузки сообщений при ленивой подгрузке
 
 async function loadMessages(offset = 0, limit = 10) {
-  console.log(
-    "Sending GET request to /messages with offset and limit:",
-    offset,
-    limit
-  );
   try {
     const response = await fetch(
       `http://localhost:3000/messages?offset=${offset}&limit=${limit}`
@@ -95,12 +98,10 @@ async function loadMessages(offset = 0, limit = 10) {
     }
 
     const messages = await response.json();
-    console.log("Loaded messages from server in order:", messages);
+    console.log("Loaded messages from server:", messages);
 
-    // Добавляем сообщения в том порядке, в котором они пришли
     messages.forEach((message) => {
-      console.log("Adding message to chat:", message);
-      addMessageToChat(message.content); // Добавляем в конец чата
+      addMessageToChat(message.content, message.mimetype); // Передаём mimetype
     });
   } catch (error) {
     console.error("Error loading messages:", error);
@@ -111,3 +112,43 @@ async function loadMessages(offset = 0, limit = 10) {
 window.addEventListener("DOMContentLoaded", () => {
   loadMessages();
 });
+
+//! Загрузка файлов (изображения, видео, аудио)
+
+const fileUploadButton = document.getElementById("file-upload-btn");
+const fileInput = document.getElementById("file-input");
+
+// При нажатии на кнопку имитируем клик по input
+fileUploadButton.addEventListener("click", () => {
+  fileInput.click();
+});
+
+// Обработчик выбора файлов
+fileInput.addEventListener("change", (event) => {
+  const files = Array.from(event.target.files);
+  files.forEach(uploadFile);
+});
+
+// Функция загрузки файла
+async function uploadFile(file) {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const response = await fetch("http://localhost:3000/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to upload file");
+    }
+
+    const uploadedFile = await response.json();
+    console.log("Uploaded file:", uploadedFile);
+
+    addMessageToChat(uploadedFile.content, uploadedFile.mimetype); // Передаём mimetype
+  } catch (error) {
+    console.error("Error uploading file:", error);
+  }
+}

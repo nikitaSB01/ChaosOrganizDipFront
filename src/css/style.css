@@ -90,6 +90,18 @@ body {
     text-align: left; /* Выравнивание текста по левому краю */
     margin-right: auto;
 }
+.chat-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 5px 0;
+}
+
+.chat-video,
+.chat-audio {
+    max-width: 100%;
+    margin: 5px 0;
+}
 
 .container__chat-send {
     background-color: #f3eaea;
